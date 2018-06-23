@@ -1,0 +1,359 @@
+<!doctype html>
+<!-- Declares meanMapApp as the starting Angular module -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Crime Map</title>
+    <meta name="description" content="Crime maps- Help your friends & family become safer ">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+<!--
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+-->
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static "css/mapproject.css" %}" />
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s"></script>
+
+
+
+    <style>
+
+        option{
+            padding-top: 2em; !important
+        padding-bottom: 2em; !important
+        }
+
+    </style>
+</head>
+
+<body>
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId            : '1939968159550700',
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v2.10'
+        });
+        FB.AppEvents.logPageView();
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+
+
+<div id="page-wrapper">
+
+    <!-- Header -->
+    <div id="header-wrapper">
+        <div id="header" class="container">
+
+            <!-- Logo -->
+            <h1 id="logo"><a href="index.html"><img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTcuMS4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDUxMSA1MTEiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMSA1MTE7IiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMzJweCIgaGVpZ2h0PSIzMnB4Ij4KPGc+Cgk8cGF0aCBkPSJNMjU1LjUsMEMxNDkuNzQsMCw2My42OTgsODYuMDQyLDYzLjY5OCwxOTEuODAyYzAsMzkuNTczLDkuOTcyLDc4Ljg4NywyOS42MzgsMTE2Ljg1MiAgIGMxNS42MzEsMzAuMTc1LDM3LjM4Nyw1OS41NTMsNjQuNjYzLDg3LjMxOWM0Ni4yOTEsNDcuMTIyLDkxLjkwOSw3Mi45ODgsOTMuODI5LDc0LjA2NmMxLjE0MSwwLjY0MSwyLjQwNywwLjk2MSwzLjY3MywwLjk2MSAgIGMxLjI5LDAsMi41NzktMC4zMzIsMy43MzQtMC45OTZjMS45MTgtMS4xMDEsNDcuNTEyLTI3LjUyLDkzLjc4My03NC45MTFjMjcuMjY3LTI3LjkyNyw0OS4wMTYtNTcuMzMzLDY0LjY0My04Ny40MDIgICBjMTkuNjY5LTM3Ljg0NywyOS42NDItNzYuODM4LDI5LjY0Mi0xMTUuODg5QzQ0Ny4zMDIsODYuMDQyLDM2MS4yNiwwLDI1NS41LDB6IE00MDQuNDUxLDMwMC41OCAgIGMtMTQuOTAxLDI4LjcyNy0zNS43MjYsNTYuOTA3LTYxLjg5NCw4My43NTVjLTM3LjQzNiwzOC40MDktNzUuMzQ2LDYzLjE1OC04Ny4wOTYsNzAuNDI4ICAgYy0xMS43Ny03LjE0NS00OS42NDUtMzEuNDQ3LTg3LjA0Mi02OS41ODdjLTI2LjE1Ny0yNi42NzYtNDYuOTczLTU0LjgxLTYxLjg2OS04My42MjIgICBjLTE4LjQ4MS0zNS43NDgtMjcuODUzLTcyLjY3My0yNy44NTMtMTA5Ljc1MUM3OC42OTgsOTQuMzEzLDE1OC4wMSwxNSwyNTUuNSwxNXMxNzYuODAzLDc5LjMxMywxNzYuODAzLDE3Ni44MDIgICBDNDMyLjMwMiwyMjguMzU0LDQyMi45MzIsMjY0Ljk1Miw0MDQuNDUxLDMwMC41OHoiIGZpbGw9IiNGRkZGRkYiLz4KCTxwYXRoIGQ9Ik0zODIuMDgxLDEyMy44NDdjLTAuOTk0LTEuODU2LTIuMDQ2LTMuNzIxLTMuMTI3LTUuNTQyYy0yLjExNS0zLjU2MS02LjcxNi00LjczMi0xMC4yNzgtMi42MTkgICBjLTMuNTYyLDIuMTE1LTQuNzM0LDYuNzE3LTIuNjE5LDEwLjI3OGMwLjk3OCwxLjY0NiwxLjkyOSwzLjMzMiwyLjg1NCw1LjA2MmMwLjAwMSwwLjAwMywwLjAwMywwLjAwNywwLjAwNSwwLjAxICAgQzM3OC43ODQsMTQ5LjUwNSwzODQsMTcwLjQxMSwzODQsMTkxLjVjMCw3MC44NTUtNTcuNjQ1LDEyOC41LTEyOC41LDEyOC41UzEyNywyNjIuMzU1LDEyNywxOTEuNVMxODQuNjQ1LDYzLDI1NS41LDYzICAgYzE1LjYyMywwLDMwLjg4NSwyLjc3LDQ1LjM2Myw4LjIzNGMzLjg3NCwxLjQ2Myw4LjIwMy0wLjQ5Myw5LjY2NS00LjM2OWMxLjQ2Mi0zLjg3NS0wLjQ5NC04LjIwMy00LjM2OS05LjY2NSAgIGMtMTYuMTc2LTYuMTA0LTMzLjIyLTkuMi01MC42NTktOS4yQzE3Ni4zNzQsNDgsMTEyLDExMi4zNzQsMTEyLDE5MS41UzE3Ni4zNzQsMzM1LDI1NS41LDMzNVMzOTksMjcwLjYyNiwzOTksMTkxLjUgICBjMC0yMy41NjYtNS44MzgtNDYuOTM3LTE2LjkxMi02Ny42NDJDMzgyLjA4NiwxMjMuODU0LDM4Mi4wODQsMTIzLjg1MSwzODIuMDgxLDEyMy44NDd6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8cGF0aCBkPSJNMzMxLjA1OCw4Ny41NWM1LjM2NCwzLjkwNiwxMC40Nyw4LjI2NSwxNS4xNzYsMTIuOTU4YzEuNDY0LDEuNDU5LDMuMzc5LDIuMTg5LDUuMjk1LDIuMTg5ICAgYzEuOTIzLDAsMy44NDYtMC43MzUsNS4zMTEtMi4yMDVjMi45MjUtMi45MzMsMi45MTctNy42ODItMC4wMTYtMTAuNjA2Yy01LjI1Mi01LjIzNy0xMC45NTEtMTAuMTAzLTE2LjkzNy0xNC40NjIgICBjLTMuMzUtMi40MzgtOC4wNC0xLjY5OS0xMC40NzgsMS42NDhDMzI2Ljk3Miw4MC40MiwzMjcuNzEsODUuMTExLDMzMS4wNTgsODcuNTV6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8cGF0aCBkPSJNMzAzLjUsNDk2aC05NmMtNC4xNDIsMC03LjUsMy4zNTgtNy41LDcuNXMzLjM1OCw3LjUsNy41LDcuNWg5NmM0LjE0MiwwLDcuNS0zLjM1OCw3LjUtNy41UzMwNy42NDIsNDk2LDMwMy41LDQ5NnoiIGZpbGw9IiNGRkZGRkYiLz4KCTxwYXRoIGQ9Ik0yNzIsMTQzLjVjMCw1Ljk3MiwxLjY3MSwxMS41NjEsNC41NjksMTYuMzI1TDI1NS41LDE4MC44OTRsLTIxLjA2OS0yMS4wNjljMi44OTgtNC43NjQsNC41NjktMTAuMzUzLDQuNTY5LTE2LjMyNSAgIGMwLTE3LjM2OS0xNC4xMzEtMzEuNS0zMS41LTMxLjVTMTc2LDEyNi4xMzEsMTc2LDE0My41czE0LjEzMSwzMS41LDMxLjUsMzEuNWM1Ljk3MiwwLDExLjU2MS0xLjY3MSwxNi4zMjUtNC41NjlsMjEuMDY5LDIxLjA2OSAgIGwtMjEuMDY5LDIxLjA2OUMyMTkuMDYxLDIwOS42NzEsMjEzLjQ3MiwyMDgsMjA3LjUsMjA4Yy0xNy4zNjksMC0zMS41LDE0LjEzMS0zMS41LDMxLjVzMTQuMTMxLDMxLjUsMzEuNSwzMS41ICAgczMxLjUtMTQuMTMxLDMxLjUtMzEuNWMwLTUuOTcyLTEuNjcxLTExLjU2MS00LjU2OS0xNi4zMjVsMjEuMDY5LTIxLjA2OWwyMS4wNjksMjEuMDY5QzI3My42NywyMjcuOTM5LDI3MiwyMzMuNTI4LDI3MiwyMzkuNSAgIGMwLDE3LjM2OSwxNC4xMzEsMzEuNSwzMS41LDMxLjVzMzEuNS0xNC4xMzEsMzEuNS0zMS41UzMyMC44NjksMjA4LDMwMy41LDIwOGMtNS45NzIsMC0xMS41NjEsMS42NzEtMTYuMzI1LDQuNTY5TDI2Ni4xMDYsMTkxLjUgICBsMjEuMDY5LTIxLjA2OWM0Ljc2NCwyLjg5OCwxMC4zNTMsNC41NjksMTYuMzI1LDQuNTY5YzE3LjM2OSwwLDMxLjUtMTQuMTMxLDMxLjUtMzEuNVMzMjAuODY5LDExMiwzMDMuNSwxMTIgICBTMjcyLDEyNi4xMzEsMjcyLDE0My41eiBNMjA3LjUsMTYwYy05LjA5OCwwLTE2LjUtNy40MDItMTYuNS0xNi41czcuNDAyLTE2LjUsMTYuNS0xNi41czE2LjUsNy40MDIsMTYuNSwxNi41ICAgYzAsMS43NzQtMC4yODksMy40ODEtMC44MSw1LjA4NGwtMTAuMzg3LTEwLjM4N2MtMi45MjktMi45MjktNy42NzgtMi45MjktMTAuNjA2LDBjLTIuOTI5LDIuOTI5LTIuOTI5LDcuNjc4LDAsMTAuNjA2ICAgbDEwLjM4NywxMC4zODdDMjEwLjk4LDE1OS43MTEsMjA5LjI3NCwxNjAsMjA3LjUsMTYweiBNMjI0LDIzOS41YzAsOS4wOTgtNy40MDIsMTYuNS0xNi41LDE2LjVzLTE2LjUtNy40MDItMTYuNS0xNi41ICAgczcuNDAyLTE2LjUsMTYuNS0xNi41YzEuNzc0LDAsMy40ODEsMC4yODksNS4wODQsMC44MWwtMTAuMzg3LDEwLjM4N2MtMi45MjksMi45MjktMi45MjksNy42NzgsMCwxMC42MDYgICBjMS40NjQsMS40NjQsMy4zODQsMi4xOTcsNS4zMDMsMi4xOTdzMy44MzktMC43MzIsNS4zMDMtMi4xOTdsMTAuMzg3LTEwLjM4N0MyMjMuNzExLDIzNi4wMTksMjI0LDIzNy43MjYsMjI0LDIzOS41eiBNMzAzLjUsMjIzICAgYzkuMDk4LDAsMTYuNSw3LjQwMiwxNi41LDE2LjVzLTcuNDAyLDE2LjUtMTYuNSwxNi41cy0xNi41LTcuNDAyLTE2LjUtMTYuNWMwLTEuNzc0LDAuMjg5LTMuNDgxLDAuODEtNS4wODRsMTAuMzg3LDEwLjM4NyAgIGMxLjQ2NCwxLjQ2NCwzLjM4NCwyLjE5Nyw1LjMwMywyLjE5N3MzLjgzOS0wLjczMiw1LjMwMy0yLjE5N2MyLjkyOS0yLjkyOSwyLjkyOS03LjY3OCwwLTEwLjYwNmwtMTAuMzg3LTEwLjM4NyAgIEMzMDAuMDE5LDIyMy4yODksMzAxLjcyNSwyMjMsMzAzLjUsMjIzeiBNMzIwLDE0My41YzAsOS4wOTgtNy40MDIsMTYuNS0xNi41LDE2LjVjLTEuNzc0LDAtMy40ODEtMC4yODktNS4wODQtMC44MWwxMC4zODctMTAuMzg3ICAgYzIuOTI5LTIuOTI5LDIuOTI5LTcuNjc4LDAtMTAuNjA2Yy0yLjkyOS0yLjkyOS03LjY3OC0yLjkyOS0xMC42MDYsMGwtMTAuMzg3LDEwLjM4N2MtMC41MjEtMS42MDMtMC44MS0zLjMwOS0wLjgxLTUuMDg0ICAgYzAtOS4wOTgsNy40MDItMTYuNSwxNi41LTE2LjVTMzIwLDEzNC40MDIsMzIwLDE0My41eiIgZmlsbD0iI0ZGRkZGRiIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=" /> &nbsp;Crime Map</a></h1>
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul>
+                    <li id="scrollwhyreport">
+                        <a href="#whyreport">Why Report?</a>
+
+                    </li>
+                    <li id="scrollmapacrime1"><a href="#mapacrime">Map a Crime now</a></li>
+                    <li class="break" id="scrollmapacrime2"><a href="#mapacrime">Search Crimes</a></li>
+                    <li id="scrollsharesection"><a href="#sharesection">Share  </a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="wrapper">
+        <div class="container" id="main">
+            <div class="row ">
+                <div class="4u 12u(narrower)" id="siderow">
+
+                    <!-- Sidebar -->
+                    <section id="sidebar">
+
+                        <header>
+                            <h3>Recent Reportings</h3>
+                        </header>
+
+
+
+                    </section>
+
+                </div>
+                <div class="8u 12u(narrower) important(narrower)">
+
+                    <!-- Content -->
+
+                    <div id="map" ></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer-wrapper">
+        <div id="footer" class="container" id="mapacrime">
+            <header class="major">
+                <h2>Map a crime right now! <span class="glyphicon glyphicon-map-marker"></span></h2>
+                <p>Help the people you care about & those around you be safe by reporting a crime to us today and sharing Crime Map with your friends, family and the world.<br>
+                </p>
+            </header>
+
+
+            <nav ng-controller="headerCtrl">
+                <ul class="nav nav-tabs nav-justified">
+                <li class="active:"><a>Map a Crime</a></li>
+                <li class="break"><a> Crime Filter!</a></li>
+                </ul>
+            </nav>
+            <div>
+                <section class="row">
+    <section class="12u 12u(narrower)">
+
+
+            <!-- Creates Form (novalidate disables HTML validation, Angular will control) -->
+            <form name ="addForm" novalidate>
+
+                <!-- Text Boxes and Other User Inputs. Note ng-model binds the values to Angular $scope -->
+                <label> <span class="badge">All fields required</span></label>
+            <div class="row 50%">
+
+
+
+
+                        <div class="6u 12u(mobile)">
+                    <input type="text" class="form-control" id="username" placeholder="Crime Details" ng-model="formData.username" required>
+                        </div>
+
+
+
+                    <div class="6u 12u(mobile)">
+                    <input type="text" class="form-control" id="language" placeholder="Area of Crime [e.g. Sector 12]" ng-model="formData.favlang" required>
+                    </div>
+                
+
+
+            </div>
+
+
+                <section class="12u 12u(narrower)">
+                    <header class="major">
+
+                        <p>The crimes you should report<br>
+                        </p>
+                    </header>
+                    <div class="row ">
+                        <ul class="divided icons 4u 12u(mobile)">
+                            <li><input type="radio" name="optionsRadios" id="radiostreetviolence" value="Street Violence" ng-model="formData.gender">
+                                &nbsp;&nbsp;<i class="fa fa-crosshairs fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Street Violence</li>
+                            <li><input type="radio" name="optionsRadios" id="radiorape" value="Rape" ng-model="formData.gender">
+                                &nbsp;&nbsp;<i class="fa fa-female fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rape</li>
+                            <li> <input type="radio" name="optionsRadios" id="radiochainsnatching" value="Chain Snatching" ng-model="formData.gender">
+                                &nbsp;&nbsp;<i class="fa fa-blind fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chain Snatching</li>
+                        </ul>
+
+                        <ul class="divided icons 4u 12u(mobile)">
+                            <li><input type="radio" name="optionsRadios" id="radioaccident" value="Accident/Hit&Run" ng-model="formData.gender">
+                                &nbsp;&nbsp;<i class="fa fa-tachometer fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accident/Hit n Run</li>
+                            <li><input type="radio" name="optionsRadios" id="radioeveteasing" value="Eve-Teasing" ng-model="formData.gender">
+                                &nbsp;&nbsp;<i class="fa fa-heartbeat fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Eve-Teasing</li>
+                            <li><input type="radio" name="optionsRadios" id="radiocarjacking" value="Car Jacking" ng-model="formData.gender">
+                                &nbsp;&nbsp;<i class="fa fa-car fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Car-Jacking</li>
+
+                        </ul>
+
+                        <ul class="divided icons 4u 12u(mobile)">
+                        <li><input type="radio" name="optionsRadios" id="radiopickpocketing" value="Pick pocketing/Theft" ng-model="formData.gender">
+                            &nbsp;&nbsp;<i class="fa fa-suitcase fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pick pocketing/Theft</li>
+                        <li><input type="radio" name="optionsRadios" id="radiodrugpeddling" value="Drug Peddling" ng-model="formData.gender">
+                            &nbsp;&nbsp;<i class="fa fa-heartbeat fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drug Peddling</li>
+                            <li><input type="radio" name="optionsRadios" id="radioothers" value="Others" ng-model="formData.gender">
+                                &nbsp;&nbsp;<i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Others</li>
+
+
+                        </ul>
+                    </div>
+                </section>
+
+
+
+                <div class="form-group">
+                    <label for="age">Number of hours passed since the crime </label>
+                    <input type="number" class="form-control" id="age" placeholder="For less than 1 hour please select 0" ng-model="formData.age" required>
+                </div>
+                <div class="form-group">
+                    <label for="latitude">Latitude</label>
+                    <input type="text" class="form-control" id="latitude" value="39.500" ng-model="formData.latitude" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="longitude">Longitude</label>
+                    <input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly>
+                </div>
+                <div class="form-group">
+                    <!-- Note RefreshLoc button tied to addCtrl. This requests a refresh of the HTML5 verified location. -->
+                    <label for="verified">Current Verified Location? <span><button ng-click="refreshLoc()" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-refresh"></span></button></span></label>
+                    <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
+                </div>
+
+                <!-- Submit button. Note that its tied to createUser() function from addCtrl. Also note ng-disabled logic which prevents early submits.  -->
+
+                    <input id="report_button" type="submit" value="Report Anonymously" ng-click="createUser()" ng-disabled="addForm.$invalid"/>
+
+            </form>
+
+    </section>
+</div></div>
+
+        </div>
+    </div>
+    <div class="wrapper" id="whyreport">
+        <div class="container" id="main">
+            <div class="row features">
+                <section class="4u 12u(narrower) feature">
+                    <div class="image-wrapper first">
+                        <a href="#" class="image featured"><img src="assets/persons.png" alt="" /></a>
+                    </div>
+                    <header>
+                        <h3>Save your friends,family and the world</h3>
+                    </header>
+                    <p>Lorem ipsum dolor sit amet consectetur et sed adipiscing elit. Curabitur
+                        vel sem sit dolor neque semper magna lorem ipsum.</p>
+                    <ul class="actions">
+                        <li><a href="#" class="button">Map a crime now!</a></li>
+                    </ul>
+                </section>
+                <section class="4u 12u(narrower) feature">
+                    <div class="image-wrapper">
+                        <a href="#" class="image featured"><img src="assets/police%20copy.png" alt="" /></a>
+                    </div>
+                    <header>
+                        <h3>Help the police track down criminals</h3>
+                    </header>
+                    <p>Lorem ipsum dolor sit amet consectetur et sed adipiscing elit. Curabitur
+                        vel sem sit dolor neque semper magna lorem ipsum.</p>
+                    <ul class="actions">
+                        <li><a href="#" class="button">Map a crime now!</a></li>
+                    </ul>
+                </section>
+                <section class="4u 12u(narrower) feature">
+                    <div class="image-wrapper">
+                        <a href="#" class="image featured"><img src="assets/chat.png" alt="" /></a>
+                    </div>
+                    <header>
+                        <h3>Alert the media to help justice prevail</h3>
+                    </header>
+                    <p>Lorem ipsum dolor sit amet consectetur et sed adipiscing elit. Curabitur
+                        vel sem sit dolor neque semper magna lorem ipsum.</p>
+                    <ul class="actions">
+                        <li><a href="#" class="button">Map a crime now!</a></li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-wrapper">
+        <div id="footer" class="container" id="sharesection">
+            <header class="major">
+                <h2>Share and Save Lives</h2>
+                <p>Help the people around you be safe by reporting a crime to us today and sharing Crime Map with your friends, family and the world.<br>
+                </p>
+            </header>
+            <section class="12u 12u(narrower)">
+                <div class="row ">
+                    <ul class="divided icons 6u 12u(mobile)">
+                        <li class="icon fa-twitter"><a href="https://twitter.com/share" class="twitter-share-button" data-size="large" data-text="Be safe guys, Have a look -" data-hashtags="MakeStreetsSafe" data-show-count="false">Tweet</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></li>
+                        <li  class="icon fa-facebook"><a id='shareBtn' ><span class="extra">facebook</span>Alert by facebook</a></li>
+                    </ul>
+                    <ul class="divided icons 6u 12u(mobile)">
+                        <li class="icon fa-whatsapp"><a href="whatsapp://send" data-text="Be Safe Guys. Have a look - " class="wa_btn wa_btn_s" data-href="Uhttps://www.facebook.com/devansh.jain.524" onClick="ga('send', 'event', { eventCategory: 'Social', eventAction: 'Share', eventLabel: 'WhatsAppShare', eventValue: 0});">Alert by Whatsapp</a></li>
+                        <li class="icon fa-comments-o"><a href="sms:+919999999999?body=Hello World!">Alert by SMS</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div id="copyright" class="container">
+        <ul class="menu">
+            <li>&copy; Crime Maps. All rights reserved.</li><li>Created By: <a href="https://www.facebook.com/devansh.jain.524">Devansh Jain Nawal</a></li>
+        </ul>
+    </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+
+<script>
+    document.getElementById('shareBtn').onclick = function() {
+        FB.ui({
+            method: 'share',
+            display: 'popup',
+            href: 'http://localhost:3000/#/join',
+        }, function(response){});
+    }
+</script>
+<script type="text/javascript">
+    if(typeof wabtn4fg==="undefined"){
+        wabtn4fg=1;
+        h=document.head||document.getElementsByTagName("head")[0],s=document.createElement("script");
+        s.type="text/javascript";
+        s.src="js/whatsapp.js";
+        h.appendChild(s);
+    }
+</script>
+
+<script src="assets/js/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        $("#scrollwhyreport").click(function () {
+            $('html, body').animate({
+                scrollTop: $("#whyreport").offset().top
+            }, 1200);
+        });
+
+        $("#scrollmapacrime1").click(function () {
+            $('html, body').animate({
+                scrollTop: $("#mapacrime").offset().top
+            }, 1200);
+        });
+
+        $("#scrollmapacrime2").click(function () {
+            $('html, body').animate({
+                scrollTop: $("#mapacrime").offset().top
+            }, 1200);
+        });
+
+        $('#scrollsharesection').click(function () {
+            $('html, body').animate({
+                scrollTop: $("#sharesection").offset().top
+            }, 1200);
+        });
+
+    });
+</script>
+
+<script src="{% static "js/jquery.dropotron.min.js" %}"> </script>
+<script src="{% static "js/skel.min.js" %}"></script>
+<script src="{% static "js/util.js" %}"></script>
+<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="{% static "js/main.js" %}"></script>
+<script src="{% static "js/jquery.min.js" %}"></script>
+
+</body>
+</html>
