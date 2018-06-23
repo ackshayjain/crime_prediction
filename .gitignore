@@ -1,7 +1,6 @@
 db.sqlite3
 staticfiles
 
-
 .DS_Store
 .py[cod]
 bin/
