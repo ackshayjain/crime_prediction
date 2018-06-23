@@ -8,4 +8,5 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('home.urls',namespace='home')),
+    url(r'^map/', include('ml.urls',namespace='map')),
 ]

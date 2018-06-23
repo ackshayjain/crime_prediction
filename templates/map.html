@@ -1,0 +1,150 @@
+{% extends 'index.html' %}
+
+{% block main %}
+
+<!-- Main -->
+        <div class="wrapper">
+            <div class="container" id="main">
+                <div class="row ">
+                    <div class="4u 12u(narrower)" id="siderow">
+
+                        <!-- Sidebar -->
+                        <section id="sidebar">
+
+                            <header>
+                                <h3>Recent Reportings</h3>
+                            </header>
+
+
+
+                        </section>
+
+                    </div>
+                    <div class="8u 12u(narrower) important(narrower)">
+
+                        <!-- Content -->
+
+                        <div id="map" ></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer-wrapper">
+            <div id="footer" class="container" id="mapacrime">
+                <header class="major">
+                    <h2>Map a crime right now! <span class="glyphicon glyphicon-map-marker"></span></h2>
+                    <p>Help the people you care about & those around you be safe by reporting a crime to us today and sharing Crime Map with your friends, family and the world.<br>
+                    </p>
+                </header>
+
+
+                <nav ng-controller="headerCtrl">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="active:"><a>Map a Crime</a></li>
+                        <li class="break"><a> Crime Filter!</a></li>
+                    </ul>
+                </nav>
+                <div>
+                    <section class="row">
+                        <section class="12u 12u(narrower)">
+
+
+                            <!-- Creates Form (novalidate disables HTML validation, Angular will control) -->
+                            <form name ="addForm" novalidate>
+
+                                <!-- Text Boxes and Other User Inputs. Note ng-model binds the values to Angular $scope -->
+                                <label> <span class="badge">All fields required</span></label>
+                                <div class="row 50%">
+
+
+
+
+                                    <div class="6u 12u(mobile)">
+                                        <input type="text" class="form-control" id="username" placeholder="Crime Details" ng-model="formData.username" required>
+                                    </div>
+
+
+
+                                    <div class="6u 12u(mobile)">
+                                        <input type="text" class="form-control" id="language" placeholder="Area of Crime [e.g. Sector 12]" ng-model="formData.favlang" required>
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <section class="12u 12u(narrower)">
+                                    <header class="major">
+
+                                        <p>The crimes you should report<br>
+                                        </p>
+                                    </header>
+                                    <div class="row ">
+                                        <ul class="divided icons 4u 12u(mobile)">
+                                            <li><input type="radio" name="optionsRadios" id="radiostreetviolence" value="Street Violence" ng-model="formData.gender">
+                                                &nbsp;&nbsp;<i class="fa fa-crosshairs fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Street Violence</li>
+                                                <li><input type="radio" name="optionsRadios" id="radiorape" value="Rape" ng-model="formData.gender">
+                                                    &nbsp;&nbsp;<i class="fa fa-female fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rape</li>
+                                                    <li> <input type="radio" name="optionsRadios" id="radiochainsnatching" value="Chain Snatching" ng-model="formData.gender">
+                                                        &nbsp;&nbsp;<i class="fa fa-blind fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chain Snatching</li>
+                                                    </ul>
+
+                                                    <ul class="divided icons 4u 12u(mobile)">
+                                                        <li><input type="radio" name="optionsRadios" id="radioaccident" value="Accident/Hit&Run" ng-model="formData.gender">
+                                                            &nbsp;&nbsp;<i class="fa fa-tachometer fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accident/Hit n Run</li>
+                                                            <li><input type="radio" name="optionsRadios" id="radioeveteasing" value="Eve-Teasing" ng-model="formData.gender">
+                                                                &nbsp;&nbsp;<i class="fa fa-heartbeat fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Eve-Teasing</li>
+                                                                <li><input type="radio" name="optionsRadios" id="radiocarjacking" value="Car Jacking" ng-model="formData.gender">
+                                                                    &nbsp;&nbsp;<i class="fa fa-car fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Car-Jacking</li>
+
+                                                                </ul>
+
+                                                                <ul class="divided icons 4u 12u(mobile)">
+                                                                    <li><input type="radio" name="optionsRadios" id="radiopickpocketing" value="Pick pocketing/Theft" ng-model="formData.gender">
+                                                                        &nbsp;&nbsp;<i class="fa fa-suitcase fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pick pocketing/Theft</li>
+                                                                        <li><input type="radio" name="optionsRadios" id="radiodrugpeddling" value="Drug Peddling" ng-model="formData.gender">
+                                                                            &nbsp;&nbsp;<i class="fa fa-heartbeat fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drug Peddling</li>
+                                                                            <li><input type="radio" name="optionsRadios" id="radioothers" value="Others" ng-model="formData.gender">
+                                                                                &nbsp;&nbsp;<i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Others</li>
+
+
+                                                                            </ul>
+                                                                        </div>
+                                                                    </section>
+
+
+
+                                                                    <div class="form-group">
+                                                                        <label for="age">Number of hours passed since the crime </label>
+                                                                        <input type="number" class="form-control" id="age" placeholder="For less than 1 hour please select 0" ng-model="formData.age" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="latitude">Latitude</label>
+                                                                        <input type="text" class="form-control" id="latitude" value="39.500" ng-model="formData.latitude" readonly>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="longitude">Longitude</label>
+                                                                        <input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <!-- Note RefreshLoc button tied to addCtrl. This requests a refresh of the HTML5 verified location. -->
+                                                                        <label for="verified">Current Verified Location? <span><button ng-click="refreshLoc()" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-refresh"></span></button></span></label>
+                                                                        <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
+                                                                    </div>
+
+                                                                    <!-- Submit button. Note that its tied to createUser() function from addCtrl. Also note ng-disabled logic which prevents early submits.  -->
+
+                                                                    <input id="report_button" type="submit" value="Report Anonymously" ng-click="createUser()" ng-disabled=s"addForm.$invalid"/>
+
+                                                                </form>
+
+                                                            </section>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                     
+{% endblock %}
