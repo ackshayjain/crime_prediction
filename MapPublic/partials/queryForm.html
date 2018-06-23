@@ -1,0 +1,87 @@
+
+        <!-- Panel Title -->
+        <section class="row">
+            <section class="12u 12u(narrower)">
+
+
+            <form name ="queryForm">
+                <label> <span class="badge">All fields required</span></label>
+
+                <!-- Text Boxes and Other User Inputs. Note ng-model binds the values to Angular $scope -->
+                <div class="form-group">
+                    <label for="latitude">Your Latitude</label>
+                    <input type="text" class="form-control" id="latitude" placeholder="39.5" ng-model="formData.latitude" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="longitude">Your Longitude</label>
+                    <input type="text" class="form-control" id="longitude" placeholder="-98.35" ng-model="formData.longitude" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="distance">Max. Distance (miles)</label>
+                    <input type="text" class="form-control" id="distance" placeholder="50" ng-model="formData.distance">
+                </div>
+
+                <!-- Note ng-true-value which translates check values into explicit gender strings -->
+                <label>Crimes :-</label>
+                <div class="form-group">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="optionsRadios" id="checkstreetviolence" value="Street Violence" ng-model="formData.streetviolence" ng-true-value = "'Street Violence'">
+                        Street Violence
+                    </label><label class="checkbox-inline">
+                    <input type="checkbox" name="optionsRadios" id="checkrape" value="Rape" ng-model="formData.rape" ng-true-value = "'Rape'">
+                    Rape
+                </label><label class="checkbox-inline">
+                    <input type="checkbox" name="optionsRadios" id="checkchainsnatching" value="Chain Snatching" ng-model="formData.chainsnatching" ng-true-value = "'Chain Snatching'">
+                    Chain Snatching
+                </label><label class="checkbox-inline">
+                    <input type="checkbox" name="optionsRadios" id="checkaccident" value="Accident/Hit n Run" ng-model="formData.accident" ng-true-value = "'Accident/Hit n Run'">
+                    Accident/Hit n Run
+                </label><label class="checkbox-inline">
+                    <input type="checkbox" name="optionsRadios" id="checkeveteasing" value="Eve-Teasing" ng-model="formData.eveteasing" ng-true-value = "'Eve-Teasing'">
+                    Eve-Teasing
+                </label><label class="checkbox-inline">
+                    <input type="checkbox" name="optionsRadios" id="checkcarjacking" value="Car-Jacking" ng-model="formData.carjacking" ng-true-value = "'Car-Jacking'">
+                    Car-Jacking
+                </label><label class="checkbox-inline">
+                    <input type="checkbox" name="optionsRadios" id="checkpickpocketing" value="Pick Pocketing/Theft" ng-model="formData.pickpocketing" ng-true-value = "'Pick Pocketing/Theft'">
+                    Pick Pocketing/Theft
+                </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="optionsRadios" id="checkdrugpeddling" value="Drug Peddling" ng-model="formData.drugpeddling" ng-true-value="'Drug Peddling'">
+                        Drug Peddling
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="optionsRadios" id="checkothers" value="Others" ng-model="formData.others" ng-true-value="'Others'">
+                        Others
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="minage">Min. Hours ago</label>
+                    <input type="number" class="form-control" id="minage" placeholder="5" ng-model="formData.minage">
+                </div>
+                <div class="form-group">
+                    <label for="maxage">Max. Hours ago</label>
+                    <input type="number" class="form-control" id="maxage" placeholder="80" ng-model="formData.maxage">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="favlang" placeholder="Name of the Area" ng-model="formData.favlang">
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="verified" id="radiomale" value="True" ng-model="formData.verified"> <strong>Include Only HTML5 Verified Locations?</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Query button. Note that its tied to queryUsers() function from queryCtrl.  -->
+                <button type="submit" class="btn btn-danger btn-block" ng-click="queryUsers()">Search</button>
+            </form>
+        </s>
+
+        <!-- Footer panel for displaying count. Note how it will only display if queryCount is greater than 0 -->
+        <div ng-show="queryCount>0" class="panel-footer">
+                <p class="text-center">Hot Dang! We Found {{queryCount}} Teammates.</p>
+        </div>
+            </section>
+        </section>>
